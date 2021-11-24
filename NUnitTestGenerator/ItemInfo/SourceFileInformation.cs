@@ -1,12 +1,11 @@
-﻿namespace NUnitTestGenerator.ItemInfo
-{
-    internal class SourceFileInformation
-    {
-        public IList<TypeInformation> Types { get; }
+﻿namespace NUnitTestGenerator.ItemInfo;
 
-        public SourceFileInformation(IEnumerable<TypeInformation> types)
-        {
-            Types = types.ToList();
-        }
+internal class SourceFileInformation
+{
+    public SourceFileInformation(IEnumerable<TypeInformation> types)
+    {
+        Types = types.ToList();
     }
+
+    public IList<TypeInformation> Types { get; }
 }
