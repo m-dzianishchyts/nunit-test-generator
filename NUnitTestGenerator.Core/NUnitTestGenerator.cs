@@ -2,9 +2,9 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
-using NUnitTestGenerator.ItemInfo;
+using NUnitTestGenerator.Core.ItemInfo;
 
-namespace NUnitTestGenerator;
+namespace NUnitTestGenerator.Core;
 
 public static class NUnitTestGenerator
 {
@@ -28,28 +28,39 @@ public static class NUnitTestGenerator
     {
         SourceFileInformation sourceFileInformation = SourcesParser.GetSourceFileInfo(sourceFileContent);
 
-        string TestClassNameSelector(TypeInformation typeInformation)
-        {
-            return typeInformation.Name + TestClassPostfix;
-        }
-
         string TestClassSourcesSelector(TypeInformation typeInformation)
         {
             ClassDeclarationSyntax classDeclaration = GenerateClass(typeInformation);
+
+            IList<UsingDirectiveSyntax> usings = new List<UsingDirectiveSyntax>
+            {
+                // SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(System))),
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeof(Assert).Namespace!)),
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(Moq))),
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeof(IList<>).Namespace!))
+            };
+
+            if (typeInformation.NamespaceName is not null)
+            {
+                usings.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeInformation.NamespaceName)));
+            }
+
             CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
-                .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(System))))
-                .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(NUnit.Framework))))
-                .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(Moq))))
-                .AddUsings(
-                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(System.Collections.Generic))))
+                .AddUsings(usings.ToArray())
                 .AddMembers(classDeclaration);
             string sources = compilationUnit.NormalizeWhitespace().ToFullString();
             return sources;
         }
 
         IDictionary<string, string> testClassNameContentDictionary =
-            sourceFileInformation.Types.ToDictionary(TestClassNameSelector, TestClassSourcesSelector);
+            sourceFileInformation.Types.ToDictionary(GenerateTestClassName, TestClassSourcesSelector);
         return testClassNameContentDictionary;
+    }
+
+
+    private static string GenerateTestClassName(TypeInformation typeInformation)
+    {
+        return typeInformation.Name + TestClassPostfix;
     }
 
     private static ClassDeclarationSyntax GenerateClass(TypeInformation typeInformation)
@@ -69,10 +80,10 @@ public static class NUnitTestGenerator
             }
         }
 
-        VariableDeclarationSyntax variableDependingOnClass =
-            GenerateVariable(DetermineVariableNameDependingOnTypeName(typeInformation.Name), typeInformation.Name);
-        FieldDeclarationSyntax fieldDependingOnClass = GenerateField(variableDependingOnClass);
-        fields.Add(fieldDependingOnClass);
+        VariableDeclarationSyntax variableDependingOnTargetClass =
+            GenerateVariable(DetermineVariableNameDependingOnTypeName(typeInformation.Name), typeInformation.InnerName);
+        FieldDeclarationSyntax fieldDependingOnTargetClass = GenerateField(variableDependingOnTargetClass);
+        fields.Add(fieldDependingOnTargetClass);
 
         var methods = new List<MemberDeclarationSyntax>();
         if (constructor is not null)
@@ -86,7 +97,7 @@ public static class NUnitTestGenerator
         methods.AddRange(typeMethods);
 
         ClassDeclarationSyntax classDeclaration = SyntaxFactory
-            .ClassDeclaration(typeInformation.Name + TestClassPostfix)
+            .ClassDeclaration(GenerateTestClassName(typeInformation))
             .AddMembers(fields.ToArray())
             .AddMembers(methods.ToArray())
             .AddAttributeLists(SyntaxFactory.AttributeList().AddAttributes(ClassAttribute));

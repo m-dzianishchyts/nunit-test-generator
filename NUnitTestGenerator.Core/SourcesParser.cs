@@ -1,9 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using NUnitTestGenerator.ItemInfo;
+using NUnitTestGenerator.Core.ItemInfo;
 
-namespace NUnitTestGenerator;
+namespace NUnitTestGenerator.Core;
 
 internal static class SourcesParser
 {
@@ -49,7 +49,15 @@ internal static class SourcesParser
             .Where(IsPublicMember)
             .Select(GetConstructorInfo)
             .ToList();
-        var typeInformation = new TypeInformation(classDeclaration.Identifier.ValueText, methods, constructors);
+        ParentSyntaxExtractionHelper.GetParentSyntax(classDeclaration,
+                                                        out NamespaceDeclarationSyntax? namespaceDeclaration);
+        IList<ClassDeclarationSyntax> outerClasses =
+            ParentSyntaxExtractionHelper.GetOuterClassesSyntax(classDeclaration);
+        string classInnerName = string.Join('.', outerClasses.Select(clazz => clazz.Identifier.ValueText)
+                                                .Append(classDeclaration.Identifier.ValueText));
+        var typeInformation = new TypeInformation(namespaceDeclaration?.Name.ToString(),
+                                                  classDeclaration.Identifier.ValueText,
+                                                  classInnerName, methods, constructors);
         return typeInformation;
     }
 

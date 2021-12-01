@@ -1,4 +1,4 @@
-﻿namespace NUnitTestGenerator.ItemInfo;
+﻿namespace NUnitTestGenerator.Core.ItemInfo;
 
 internal class SourceFileInformation
 {
