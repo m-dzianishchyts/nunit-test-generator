@@ -12,9 +12,9 @@ internal class TypeInformation
         Constructors = constructors.ToList();
     }
 
-    public string? NamespaceName { get; }
-    public string Name { get; }
-    public string InnerName { get; }
-    public IList<MethodInformation> Methods { get; }
-    public IList<ConstructorInformation> Constructors { get; }
+    public string? NamespaceName { get; set; }
+    public string Name { get; set; }
+    public string InnerName { get; set; }
+    public IList<MethodInformation> Methods { get; set; }
+    public IList<ConstructorInformation> Constructors { get; set; }
 }

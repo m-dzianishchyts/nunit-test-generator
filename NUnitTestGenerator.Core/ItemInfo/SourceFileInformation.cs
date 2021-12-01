@@ -7,5 +7,5 @@ internal class SourceFileInformation
         Types = types.ToList();
     }
 
-    public IList<TypeInformation> Types { get; }
+    public IList<TypeInformation> Types { get; set; }
 }

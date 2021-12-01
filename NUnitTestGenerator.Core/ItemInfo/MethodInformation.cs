@@ -11,7 +11,7 @@ internal class MethodInformation
             .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
-    public string Name { get; }
-    public string ReturnType { get; }
-    public IDictionary<string, string> ParametersNameTypeDictionary { get; }
+    public string Name { get; set; }
+    public string ReturnType { get; set; }
+    public IDictionary<string, string> ParametersNameTypeDictionary { get; set; }
 }

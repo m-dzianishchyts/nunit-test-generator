@@ -9,6 +9,6 @@ internal class ConstructorInformation
             .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
-    public string Name { get; }
-    public IDictionary<string, string> ParametersNameTypeDictionary { get; }
+    public string Name { get; set; }
+    public IDictionary<string, string> ParametersNameTypeDictionary { get; set; }
 }
