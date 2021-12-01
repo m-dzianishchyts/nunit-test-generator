@@ -12,7 +12,9 @@ public static class NUnitTestGenerator
 
     private static readonly SyntaxToken PublicModifier = SyntaxFactory.Token(SyntaxKind.PublicKeyword);
     private static readonly SyntaxToken PrivateModifier = SyntaxFactory.Token(SyntaxKind.PrivateKeyword);
-    private static readonly TypeSyntax VoidReturnType = SyntaxFactory.ParseTypeName(typeof(void).Name);
+
+    private static readonly TypeSyntax VoidReturnType =
+        SyntaxFactory.ParseTypeName(ReformatToStartWithLower(typeof(void).Name));
 
     private static readonly AttributeSyntax SetupAttribute =
         SyntaxFactory.Attribute(SyntaxFactory.ParseName(nameof(SetUpAttribute).Replace(nameof(Attribute), null)));
@@ -28,33 +30,33 @@ public static class NUnitTestGenerator
     {
         SourceFileInformation sourceFileInformation = SourcesParser.GetSourceFileInfo(sourceFileContent);
 
-        string TestClassSourcesSelector(TypeInformation typeInformation)
+        IDictionary<string, string> testClassNameContentDictionary =
+            sourceFileInformation.Types.ToDictionary(GenerateTestClassName, GenerateTestClassSources);
+        return testClassNameContentDictionary;
+    }
+
+    private static string GenerateTestClassSources(TypeInformation typeInformation)
+    {
+        ClassDeclarationSyntax classDeclaration = GenerateClass(typeInformation);
+
+        IList<UsingDirectiveSyntax> usings = new List<UsingDirectiveSyntax>
         {
-            ClassDeclarationSyntax classDeclaration = GenerateClass(typeInformation);
+            // SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(System))),
+            SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeof(Assert).Namespace!)),
+            SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(Moq))),
+            SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeof(IList<>).Namespace!))
+        };
 
-            IList<UsingDirectiveSyntax> usings = new List<UsingDirectiveSyntax>
-            {
-                // SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(System))),
-                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeof(Assert).Namespace!)),
-                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(nameof(Moq))),
-                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeof(IList<>).Namespace!))
-            };
-
-            if (typeInformation.NamespaceName is not null)
-            {
-                usings.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeInformation.NamespaceName)));
-            }
-
-            CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
-                .AddUsings(usings.ToArray())
-                .AddMembers(classDeclaration);
-            string sources = compilationUnit.NormalizeWhitespace().ToFullString();
-            return sources;
+        if (typeInformation.NamespaceName is not null)
+        {
+            usings.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(typeInformation.NamespaceName)));
         }
 
-        IDictionary<string, string> testClassNameContentDictionary =
-            sourceFileInformation.Types.ToDictionary(GenerateTestClassName, TestClassSourcesSelector);
-        return testClassNameContentDictionary;
+        CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
+            .AddUsings(usings.ToArray())
+            .AddMembers(classDeclaration);
+        string sources = compilationUnit.NormalizeWhitespace().ToFullString();
+        return sources;
     }
 
 
@@ -139,8 +141,13 @@ public static class NUnitTestGenerator
 
     private static string DetermineVariableNameDependingOnTypeName(string typeName)
     {
-        string variableNameDependingOnTypeName = "_" + char.ToUpper(typeName[0]) + typeName.Remove(0, 1);
+        string variableNameDependingOnTypeName = "_" + ReformatToStartWithLower(typeName);
         return variableNameDependingOnTypeName;
+    }
+
+    private static string ReformatToStartWithLower(string str)
+    {
+        return char.ToLower(str[0]) + str.Remove(0, 1);
     }
 
     private static StatementSyntax GenerateDefaultAssignStatement(string name, string typeName)
