@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,6 +6,25 @@
 
 	<IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Expected\**" />
+    <Compile Remove="Generated\**" />
+    <EmbeddedResource Remove="Expected\**" />
+    <EmbeddedResource Include="Generated\**" />
+    <None Include="Expected\**" />
+    <None Include="Generated\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Expected\CalculatorTest.cs" />
+    <None Remove="Expected\TrivialTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Expected\CalculatorTest.cs" />
+    <EmbeddedResource Include="Expected\TrivialTest.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
@@ -16,6 +35,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NUnitTestGenerator.Core\NUnitTestGenerator.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Generated\" />
   </ItemGroup>
 
 </Project>
