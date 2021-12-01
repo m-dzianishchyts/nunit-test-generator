@@ -1,48 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
 
-	<IsPackable>false</IsPackable>
-  </PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Expected\**" />
-    <Compile Remove="Generated\**" />
-    <EmbeddedResource Remove="Expected\**" />
-    <EmbeddedResource Remove="Generated\**" />
-    <None Include="Expected\**" />
-    <None Include="Generated\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Expected\**" />
+		<Compile Remove="Generated\**" />
+		<EmbeddedResource Remove="Expected\**" />
+		<EmbeddedResource Remove="Generated\**" />
+		<None Include="Expected\**" />
+		<None Include="Generated\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Expected\CalculatorTest.cs" />
-    <None Remove="Expected\TrivialTest.cs" />
-    <None Remove="Expected\WithMockDependenciesTest.cs" />
-    <None Remove="Expected\WithValueTypeDependenciesTest.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Expected\CalculatorTest.cs" />
+		<None Remove="Expected\TrivialTest.cs" />
+		<None Remove="Expected\WithMockDependenciesTest.cs" />
+		<None Remove="Expected\WithValueTypeDependenciesTest.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Expected\CalculatorTest.cs" />
-    <EmbeddedResource Include="Expected\TrivialTest.cs" />
-    <EmbeddedResource Include="Expected\WithMockDependenciesTest.cs" />
-    <EmbeddedResource Include="Expected\WithValueTypeDependenciesTest.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Expected\CalculatorTest.cs" />
+		<EmbeddedResource Include="Expected\TrivialTest.cs" />
+		<EmbeddedResource Include="Expected\WithMockDependenciesTest.cs" />
+		<EmbeddedResource Include="Expected\WithValueTypeDependenciesTest.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
-    <PackageReference Include="coverlet.collector" Version="3.1.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+		<PackageReference Include="NUnit" Version="3.13.2" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+		<PackageReference Include="coverlet.collector" Version="3.1.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\NUnitTestGenerator.Core\NUnitTestGenerator.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\NUnitTestGenerator.Core\NUnitTestGenerator.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Generated\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Generated\" />
+	</ItemGroup>
 
 </Project>

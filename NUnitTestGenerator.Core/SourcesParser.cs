@@ -50,7 +50,7 @@ internal static class SourcesParser
             .Select(GetConstructorInfo)
             .ToList();
         ParentSyntaxExtractionHelper.GetParentSyntax(classDeclaration,
-                                                        out NamespaceDeclarationSyntax? namespaceDeclaration);
+                                                     out NamespaceDeclarationSyntax? namespaceDeclaration);
         IList<ClassDeclarationSyntax> outerClasses =
             ParentSyntaxExtractionHelper.GetOuterClassesSyntax(classDeclaration);
         string classInnerName = string.Join('.', outerClasses.Select(clazz => clazz.Identifier.ValueText)

@@ -11,8 +11,10 @@ public static class GenerationGoalPipeline
         int testsWritingMaxDegreeOfParallelism = sourcePaths.Count;
         var linkOptions = new DataflowLinkOptions { PropagateCompletion = true };
         TransformBlock<string, string> sourceLoading = PrepareSourceLoading(sourceLoadingMaxDegreeOfParallelism);
-        TransformManyBlock<string, KeyValuePair<string, string>> testGeneration = PrepareTestGeneration(testsGenerationMaxDegreeOfParallelism);
-        ActionBlock<KeyValuePair<string, string>> testWriting = PrepareTestWriting(testsWritingMaxDegreeOfParallelism, outputPath);
+        TransformManyBlock<string, KeyValuePair<string, string>> testGeneration =
+            PrepareTestGeneration(testsGenerationMaxDegreeOfParallelism);
+        ActionBlock<KeyValuePair<string, string>> testWriting =
+            PrepareTestWriting(testsWritingMaxDegreeOfParallelism, outputPath);
 
         sourceLoading.LinkTo(testGeneration, linkOptions);
         testGeneration.LinkTo(testWriting, linkOptions);
@@ -26,7 +28,8 @@ public static class GenerationGoalPipeline
         return testWriting.Completion;
     }
 
-    private static ActionBlock<KeyValuePair<string, string>> PrepareTestWriting(int maxDegreeOfParallelism, string outputPath)
+    private static ActionBlock<KeyValuePair<string, string>> PrepareTestWriting(
+        int maxDegreeOfParallelism, string outputPath)
     {
         var executionOptions = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism };
         var writeFileBlock = new ActionBlock<KeyValuePair<string, string>>
@@ -42,7 +45,8 @@ public static class GenerationGoalPipeline
         return writeFileBlock;
     }
 
-    private static TransformManyBlock<string, KeyValuePair<string, string>> PrepareTestGeneration(int maxDegreeOfParallelism)
+    private static TransformManyBlock<string, KeyValuePair<string, string>> PrepareTestGeneration(
+        int maxDegreeOfParallelism)
     {
         var executionOptions = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism };
         var testGeneration = new TransformManyBlock<string, KeyValuePair<string, string>>
@@ -58,7 +62,7 @@ public static class GenerationGoalPipeline
 
     private static TransformBlock<string, string> PrepareSourceLoading(int maxDegreeOfParallelism)
     {
-        var executionOptions = new ExecutionDataflowBlockOptions {MaxDegreeOfParallelism = maxDegreeOfParallelism};
+        var executionOptions = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism };
         var downloadStringBlock = new TransformBlock<string, string>
         (
             async sourceFilePath =>

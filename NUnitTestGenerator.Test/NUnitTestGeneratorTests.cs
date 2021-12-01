@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using NUnitTestGenerator.Core;
@@ -11,6 +10,12 @@ namespace NUnitTestGenerator.Test;
 [TestFixture]
 public class NUnitTestGeneratorTests
 {
+    [SetUp]
+    public void Setup()
+    {
+        Directory.CreateDirectory(PathToOutputDirectory);
+    }
+
     private const string PathToTargetDirectory =
         @"C:\Users\maxiemar\source\repos\NUnitTestGenerator\NUnitTestGenerator.Test\Targets";
 
@@ -23,25 +28,19 @@ public class NUnitTestGeneratorTests
     private const string TestClassPostfix = "Test";
     private const string CSharpExtension = "cs";
 
-    readonly IList<string> _pathsToTargetFiles;
+    private readonly IList<string> _pathsToTargetFiles;
 
     private static IList<string> _testClasses = new List<string>
     {
         nameof(Trivial),
         nameof(Calculator),
         nameof(WithValueTypeDependencies),
-        nameof(WithMockDependencies),
+        nameof(WithMockDependencies)
     };
 
     public NUnitTestGeneratorTests()
     {
         _pathsToTargetFiles = Directory.GetFiles(PathToTargetDirectory);
-    }
-
-    [SetUp]
-    public void Setup()
-    {
-        Directory.CreateDirectory(PathToOutputDirectory);
     }
 
     [Test]

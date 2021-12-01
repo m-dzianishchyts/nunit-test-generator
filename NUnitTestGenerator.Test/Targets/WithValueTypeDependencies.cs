@@ -1,21 +1,24 @@
-﻿using System.IO;
+﻿// ReSharper disable ArrangeNamespaceBody
 
-namespace NUnitTestGenerator.Test.Targets;
+using System.IO;
 
-public class WithValueTypeDependencies
+namespace NUnitTestGenerator.Test.Targets
 {
-    private readonly string _path;
-    private readonly int _maxSize;
-
-    public WithValueTypeDependencies(string path, int maxSize)
+    public class WithValueTypeDependencies
     {
-        _path = path;
-        _maxSize = maxSize;
-    }
+        private readonly int _maxSize;
+        private readonly string _path;
 
-    public string ReadFile()
-    {
-        string content = File.ReadAllText(_path);
-        return content[.._maxSize];
+        public WithValueTypeDependencies(string path, int maxSize)
+        {
+            _path = path;
+            _maxSize = maxSize;
+        }
+
+        public string ReadFile()
+        {
+            string content = File.ReadAllText(_path);
+            return content[.._maxSize];
+        }
     }
 }
