@@ -11,7 +11,7 @@
     <Compile Remove="Expected\**" />
     <Compile Remove="Generated\**" />
     <EmbeddedResource Remove="Expected\**" />
-    <EmbeddedResource Include="Generated\**" />
+    <EmbeddedResource Remove="Generated\**" />
     <None Include="Expected\**" />
     <None Include="Generated\**" />
   </ItemGroup>
