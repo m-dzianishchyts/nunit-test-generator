@@ -19,11 +19,15 @@
   <ItemGroup>
     <None Remove="Expected\CalculatorTest.cs" />
     <None Remove="Expected\TrivialTest.cs" />
+    <None Remove="Expected\WithMockDependenciesTest.cs" />
+    <None Remove="Expected\WithValueTypeDependenciesTest.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Expected\CalculatorTest.cs" />
     <EmbeddedResource Include="Expected\TrivialTest.cs" />
+    <EmbeddedResource Include="Expected\WithMockDependenciesTest.cs" />
+    <EmbeddedResource Include="Expected\WithValueTypeDependenciesTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

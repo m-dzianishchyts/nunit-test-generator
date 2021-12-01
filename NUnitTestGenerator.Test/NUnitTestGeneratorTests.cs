@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using NUnitTestGenerator.Core;
@@ -24,6 +25,14 @@ public class NUnitTestGeneratorTests
 
     readonly IList<string> _pathsToTargetFiles;
 
+    private static IList<string> _testClasses = new List<string>
+    {
+        nameof(Trivial),
+        nameof(Calculator),
+        nameof(WithValueTypeDependencies),
+        nameof(WithMockDependencies),
+    };
+
     public NUnitTestGeneratorTests()
     {
         _pathsToTargetFiles = Directory.GetFiles(PathToTargetDirectory);
@@ -40,29 +49,15 @@ public class NUnitTestGeneratorTests
     {
         await Task.Run(() => GenerationGoalPipeline.PrepareGoal(_pathsToTargetFiles, PathToOutputDirectory));
 
-        const int expectedResultFilesAmount = 2;
+        int expectedResultFilesAmount = _testClasses.Count;
         IList<string> pathToResultFiles = Directory.GetFiles(PathToOutputDirectory);
         Assert.AreEqual(expectedResultFilesAmount, pathToResultFiles.Count);
     }
 
     [Test]
-    public async Task NUnitTestGenerator_GeneratesTestsFor_TrivialClass()
+    [TestCaseSource(nameof(_testClasses))]
+    public async Task NUnitTestGenerator_GeneratesTestsFor(string testClassName)
     {
-        const string testClassName = nameof(Trivial);
-        string pathToTargetFile = Path.ChangeExtension(Path.Combine(PathToTargetDirectory, testClassName),
-                                                       CSharpExtension);
-        await Task.Run(() => GenerationGoalPipeline.PrepareGoal(new[] { pathToTargetFile }, PathToOutputDirectory));
-
-        string testFileName = Path.ChangeExtension($"{testClassName}{TestClassPostfix}", CSharpExtension);
-        string pathToExpectedFile = Path.Combine(PathToExpectedDirectory, testFileName);
-        string pathToResultFile = Path.Combine(PathToOutputDirectory, testFileName);
-        FileAssert.AreEqual(pathToExpectedFile, pathToResultFile);
-    }
-
-    [Test]
-    public async Task NUnitTestGenerator_GeneratesTestsFor_CalcClass()
-    {
-        const string testClassName = nameof(Calculator);
         string pathToTargetFile = Path.ChangeExtension(Path.Combine(PathToTargetDirectory, testClassName),
                                                        CSharpExtension);
         await Task.Run(() => GenerationGoalPipeline.PrepareGoal(new[] { pathToTargetFile }, PathToOutputDirectory));
